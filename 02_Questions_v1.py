@@ -95,6 +95,6 @@ class Questions:
 # Main Routine
 if __name__ == "__main__":
     root = Tk()
-    root.title("Temperature Converter")
+    root.title("Maori Quiz")
     something = Home()
     root.mainloop()

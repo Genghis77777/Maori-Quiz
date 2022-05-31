@@ -1,7 +1,10 @@
-# Introduces End Screen, initially just Home, Question 10 and End Screen to see if buttons work
+# Right answers are collected and displayed in the end screen,
+# Wrong answers also open the next question
 
 from tkinter import *
 from functools import partial  # To prevent unwanted windows
+
+right_answers = 0
 
 
 class Home:
@@ -95,26 +98,29 @@ class Question_1:
         # Answer 1 Button
         self.answer_one_button = Button(self.answer_frame, text="Panana",
                                         font="Arial 12", bg="green", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_2_incorrect)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Karepe",
                                         font="Arial 12", bg="purple", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_2_incorrect)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Aporo",
                                           font="Arial 12", bg="blue", pady=10,
                                           padx=10, width=answer_button_width,
-                                          command=self.question_2)
+                                          command=self.question_2_correct)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Ripanga",
                                          font="Arial 12", bg="brown", pady=10,
-                                         padx=10, width=answer_button_width)
+                                         padx=10, width=answer_button_width,
+                                         command=self.question_2_incorrect)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -128,7 +134,13 @@ class Question_1:
         partner.start_quiz_button.config(state=NORMAL)
         self.question_one_box.destroy()
 
-    def question_2(self):
+    def question_2_correct(self):
+        get_correct = Question_2(self)
+        global right_answers
+        right_answers += 1
+        self.question_one_box.destroy()
+
+    def question_2_incorrect(self):
         get_correct = Question_2(self)
         self.question_one_box.destroy()
 
@@ -174,26 +186,29 @@ class Question_2:
         # Answer 1 Button
         self.answer_one_button = Button(self.answer_frame, text="Waka",
                                         font="Arial 12", bg="green", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_3_incorrect)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Ripanga",
                                         font="Arial 12", bg="purple", pady=10,
                                         padx=10, width=answer_button_width,
-                                        command=self.question_3)
+                                        command=self.question_3_correct)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Kakariki",
                                           font="Arial 12", bg="blue", pady=10,
-                                          padx=10, width=answer_button_width)
+                                          padx=10, width=answer_button_width,
+                                          command=self.question_3_incorrect)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Rakau",
                                          font="Arial 12", bg="brown", pady=10,
-                                         padx=10, width=answer_button_width)
+                                         padx=10, width=answer_button_width,
+                                         command=self.question_3_incorrect)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -207,8 +222,14 @@ class Question_2:
         partner.answer_three_button.config(state=NORMAL)
         self.question_two_box.destroy()
 
-    def question_3(self):
-        get_question_3 = Question_3(self)
+    def question_3_correct(self):
+        get_correct = Question_3(self)
+        global right_answers
+        right_answers += 1
+        self.question_two_box.destroy()
+
+    def question_3_incorrect(self):
+        get_correct = Question_3(self)
         self.question_two_box.destroy()
 
 
@@ -254,25 +275,28 @@ class Question_3:
         self.answer_one_button = Button(self.answer_frame, text="Kuri",
                                         font="Arial 12", bg="green", pady=10,
                                         padx=10, width=answer_button_width,
-                                        command=self.question_4)
+                                        command=self.question_4_correct)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Rapeti",
                                         font="Arial 12", bg="purple", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_4_incorrect)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Peia",
                                           font="Arial 12", bg="blue", pady=10,
-                                          padx=10, width=answer_button_width)
+                                          padx=10, width=answer_button_width,
+                                          command=self.question_4_incorrect)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Kahurangi",
                                          font="Arial 12", bg="brown", pady=10,
-                                         padx=10, width=answer_button_width)
+                                         padx=10, width=answer_button_width,
+                                         command=self.question_4_incorrect)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -286,8 +310,14 @@ class Question_3:
         partner.answer_three_button.config(state=NORMAL)
         self.question_three_box.destroy()
 
-    def question_4(self):
-        get_question_4 = Question_4(self)
+    def question_4_correct(self):
+        get_correct = Question_4(self)
+        global right_answers
+        right_answers += 1
+        self.question_three_box.destroy()
+
+    def question_4_incorrect(self):
+        get_correct = Question_4(self)
         self.question_three_box.destroy()
 
 
@@ -332,26 +362,29 @@ class Question_4:
         # Answer 1 Button
         self.answer_one_button = Button(self.answer_frame, text="Pereki",
                                         font="Arial 12", bg="green", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_5_incorrect)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Paru",
                                         font="Arial 12", bg="purple", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_5_incorrect)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Totohu",
                                           font="Arial 12", bg="blue", pady=10,
-                                          padx=10, width=answer_button_width)
+                                          padx=10, width=answer_button_width,
+                                          command=self.question_5_incorrect)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Hautai",
                                          font="Arial 12", bg="brown", pady=10,
                                          padx=10, width=answer_button_width,
-                                         command=self.question_5)
+                                         command=self.question_5_correct)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -365,8 +398,14 @@ class Question_4:
         partner.answer_three_button.config(state=NORMAL)
         self.question_four_box.destroy()
 
-    def question_5(self):
-        get_question_5 = Question_5(self)
+    def question_5_correct(self):
+        get_correct = Question_5(self)
+        global right_answers
+        right_answers += 1
+        self.question_four_box.destroy()
+
+    def question_5_incorrect(self):
+        get_correct = Question_5(self)
         self.question_four_box.destroy()
 
 
@@ -411,26 +450,29 @@ class Question_5:
         # Answer 1 Button
         self.answer_one_button = Button(self.answer_frame, text="Upoko",
                                         font="Arial 12", bg="green", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_6_incorrect)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Ringa",
                                         font="Arial 12", bg="purple", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_6_incorrect)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Waewae",
                                           font="Arial 12", bg="blue", pady=10,
                                           padx=10, width=answer_button_width,
-                                          command=self.question_6)
+                                          command=self.question_6_correct)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Ihu",
                                          font="Arial 12", bg="brown", pady=10,
-                                         padx=10, width=answer_button_width)
+                                         padx=10, width=answer_button_width,
+                                         command=self.question_6_incorrect)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -444,8 +486,14 @@ class Question_5:
         partner.answer_three_button.config(state=NORMAL)
         self.question_five_box.destroy()
 
-    def question_6(self):
-        get_question_6 = Question_6(self)
+    def question_6_correct(self):
+        get_correct = Question_6(self)
+        global right_answers
+        right_answers += 1
+        self.question_five_box.destroy()
+
+    def question_6_incorrect(self):
+        get_correct = Question_6(self)
         self.question_five_box.destroy()
 
 
@@ -490,26 +538,29 @@ class Question_6:
         # Answer 1 Button
         self.answer_one_button = Button(self.answer_frame, text="Te Pihoihoi",
                                         font="Arial 12", bg="green", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_7_incorrect)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Kuihi",
                                         font="Arial 12", bg="purple", pady=10,
                                         padx=10, width=answer_button_width,
-                                        command=self.question_7)
+                                        command=self.question_7_correct)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Waaka",
                                           font="Arial 12", bg="blue", pady=10,
-                                          padx=10, width=answer_button_width)
+                                          padx=10, width=answer_button_width,
+                                          command=self.question_7_incorrect)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Parera",
                                          font="Arial 12", bg="brown", pady=10,
-                                         padx=10, width=answer_button_width)
+                                         padx=10, width=answer_button_width,
+                                         command=self.question_7_incorrect)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -523,8 +574,14 @@ class Question_6:
         partner.answer_three_button.config(state=NORMAL)
         self.question_six_box.destroy()
 
-    def question_7(self):
-        get_question_7 = Question_7(self)
+    def question_7_correct(self):
+        get_correct = Question_7(self)
+        global right_answers
+        right_answers += 1
+        self.question_six_box.destroy()
+
+    def question_7_incorrect(self):
+        get_correct = Question_7(self)
         self.question_six_box.destroy()
 
 
@@ -570,25 +627,28 @@ class Question_7:
         self.answer_one_button = Button(self.answer_frame, text="Mawhero",
                                         font="Arial 12", bg="green", pady=10,
                                         padx=10, width=answer_button_width,
-                                        command=self.question_8)
+                                        command=self.question_8_correct)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Hua Manu",
                                         font="Arial 12", bg="purple", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_8_incorrect)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Waiporoporo",
                                           font="Arial 12", bg="blue", pady=10,
-                                          padx=10, width=answer_button_width)
+                                          padx=10, width=answer_button_width,
+                                          command=self.question_8_incorrect)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Phero",
                                          font="Arial 12", bg="brown", pady=10,
-                                         padx=10, width=answer_button_width)
+                                         padx=10, width=answer_button_width,
+                                         command=self.question_8_incorrect)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -602,8 +662,14 @@ class Question_7:
         partner.answer_three_button.config(state=NORMAL)
         self.question_seven_box.destroy()
 
-    def question_8(self):
-        get_question_8 = Question_8(self)
+    def question_8_correct(self):
+        get_correct = Question_8(self)
+        global right_answers
+        right_answers += 1
+        self.question_seven_box.destroy()
+
+    def question_8_incorrect(self):
+        get_correct = Question_8(self)
         self.question_seven_box.destroy()
 
 
@@ -648,26 +714,29 @@ class Question_8:
         # Answer 1 Button
         self.answer_one_button = Button(self.answer_frame, text="Rorohiko",
                                         font="Arial 12", bg="green", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_9_incorrect)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Pouaka Whakaata",
                                         font="Arial 12", bg="purple", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_9_incorrect)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Papa",
                                           font="Arial 12", bg="blue", pady=10,
-                                          padx=10, width=answer_button_width)
+                                          padx=10, width=answer_button_width,
+                                          command=self.question_9_incorrect)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Waea",
                                          font="Arial 12", bg="brown", pady=10,
                                          padx=10, width=answer_button_width,
-                                         command=self.question_9)
+                                         command=self.question_9_correct)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -681,8 +750,14 @@ class Question_8:
         partner.answer_three_button.config(state=NORMAL)
         self.question_eight_box.destroy()
 
-    def question_9(self):
-        get_question_9 = Question_9(self)
+    def question_9_correct(self):
+        get_correct = Question_9(self)
+        global right_answers
+        right_answers += 1
+        self.question_eight_box.destroy()
+
+    def question_9_incorrect(self):
+        get_correct = Question_9(self)
         self.question_eight_box.destroy()
 
 
@@ -727,26 +802,29 @@ class Question_9:
         # Answer 1 Button
         self.answer_one_button = Button(self.answer_frame, text="Ngaherehere",
                                         font="Arial 12", bg="green", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_10_incorrect)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Tarutaru",
                                         font="Arial 12", bg="purple", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.question_10_incorrect)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Mahuri",
                                           font="Arial 12", bg="blue", pady=10,
                                           padx=10, width=answer_button_width,
-                                          command=self.question_10)
+                                          command=self.question_10_correct)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Rakau",
                                          font="Arial 12", bg="brown", pady=10,
-                                         padx=10, width=answer_button_width)
+                                         padx=10, width=answer_button_width,
+                                         command=self.question_10_incorrect)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -760,8 +838,14 @@ class Question_9:
         partner.answer_three_button.config(state=NORMAL)
         self.question_nine_box.destroy()
 
-    def question_10(self):
-        get_question_10 = Question_10(self)
+    def question_10_correct(self):
+        get_correct = Question_10(self)
+        global right_answers
+        right_answers += 1
+        self.question_nine_box.destroy()
+
+    def question_10_incorrect(self):
+        get_correct = Question_10(self)
         self.question_nine_box.destroy()
 
 
@@ -806,26 +890,29 @@ class Question_10:
         # Answer 1 Button
         self.answer_one_button = Button(self.answer_frame, text="Te Puku",
                                         font="Arial 12", bg="green", pady=10,
-                                        padx=10, width=answer_button_width)
+                                        padx=10, width=answer_button_width,
+                                        command=self.end_screen_incorrect)
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
         self.answer_two_button = Button(self.answer_frame, text="Ngakau",
                                         font="Arial 12", bg="purple", pady=10,
                                         padx=10, width=answer_button_width,
-                                        command=self.end_screen)
+                                        command=self.end_screen_correct)
         self.answer_two_button.grid(row=0, column=1)
 
         # Answer 3 Button
         self.answer_three_button = Button(self.answer_frame, text="Takihi",
                                           font="Arial 12", bg="blue", pady=10,
-                                          padx=10, width=answer_button_width)
+                                          padx=10, width=answer_button_width,
+                                          command=self.end_screen_incorrect)
         self.answer_three_button.grid(row=1, column=0)
 
         # Answer 4 Button
         self.answer_four_button = Button(self.answer_frame, text="Taringa",
                                          font="Arial 12", bg="brown", pady=10,
-                                         padx=10, width=answer_button_width)
+                                         padx=10, width=answer_button_width,
+                                         command=self.end_screen_incorrect)
         self.answer_four_button.grid(row=1, column=1)
 
         # Close button (row 2)
@@ -839,8 +926,14 @@ class Question_10:
         partner.answer_three_button.config(state=NORMAL)
         self.question_ten_box.destroy()
 
-    def end_screen(self):
-        get_end_screen = End_screen(self)
+    def end_screen_correct(self):
+        global right_answers
+        right_answers += 1
+        get_correct = End_screen(self)
+        self.question_ten_box.destroy()
+
+    def end_screen_incorrect(self):
+        get_correct = End_screen(self)
         self.question_ten_box.destroy()
 
 
@@ -869,9 +962,11 @@ class End_screen:
                                              padx=20, width=17)
         self.question_number_heading.grid(row=0)
 
+        global right_answers
+
         # Question text (label, row 1)
         self.question_text = Label(self.end_screen_frame,
-                                   text="You got x answers right!",
+                                   text="You got {} answers right!".format(right_answers),
                                    font="Arial 12 italic", width=40,
                                    bg=background)
         self.question_text.grid(row=1)

@@ -1,11 +1,20 @@
-# Data is now collected in global variables.
+# Introduces functionality to the help button on the home screen.
 
 from tkinter import *
 from functools import partial  # To prevent unwanted windows
+import re
 
 right_answers = 0
+temp_right_answers = 0
 wrong_answers = 0
 games_played = 0
+
+if wrong_answers == 0:
+    ratio = right_answers
+else:
+    ratio = right_answers/wrong_answers
+
+stats = False
 
 
 class Home:
@@ -48,10 +57,15 @@ class Home:
                                    pady=10, padx=13, command=self.stats)
         self.stats_button.grid(row=0, column=0)
 
+        if stats == True:
+            self.stats_button.config(state=NORMAL)
+        else:
+            self.stats_button.config(state=DISABLED)
+
         # Help Button
         self.help_button = Button(self.bottom_frame, text=" HELP ",
                                   font="Arial 18 bold", bg="red",
-                                  pady=10, padx=13)
+                                  pady=10, padx=13, command=self.help)
         self.help_button.grid(row=0, column=1)
 
     def question_1(self):
@@ -60,19 +74,85 @@ class Home:
     def stats(self):
         get_stats = Stats(self)
 
+    def help(self):
+        get_help = Help(self)
+
+
+class Help:
+    def __init__(self, partner):
+        background = "orange"
+
+        # Sets up child window (ie: question box)
+        self.help_page_box = Toplevel()
+
+        partner.help_button.config(state=DISABLED)
+
+        # If users press cross at top, closes question and 'releases' question button
+        self.help_page_box.protocol('WM_DELETE_WINDOW', partial(self.close_help_page, partner))
+
+        # Set up GUI Frame
+        self.help_page_frame = Frame(self.help_page_box, width=300, height=50, bg=background, pady=20, padx=10)
+        self.help_page_frame.grid()
+
+        # Set up Question number heading (row 0)
+        self.help_heading = Label(self.help_page_frame,
+                                  text="Help Page",
+                                  font="Arial 32 bold",
+                                  bg="yellow", pady=10,
+                                  padx=20, width=17)
+        self.help_heading.grid(row=0)
+
+        # Stats text 1 (label, row 1)
+        self.help_text_1 = Label(self.help_page_frame,
+                                 text="To play the quiz,\n push the big green “START QUIZ” button "
+                                      "\nin the center of the home screen. \n",
+                                 font="Arial 11 italic", width=55, bg=background, height=4)
+        self.help_text_1.grid(row=1)
+
+        # Stats text 1 (label, row 1)
+        self.help_text_1 = Label(self.help_page_frame,
+                                 text="Questions have multi-choice options for answers, "
+                                      "\nupon pushing an answer it will "
+                                      "take you to the next question.\n You may close the quiz at any point by clicking\n"
+                                      "the red button at the bottom of each question.\n",
+                                 font="Arial 11 italic", width=55, bg=background, height=5)
+        self.help_text_1.grid(row=2)
+
+        # Stats text 1 (label, row 1)
+        self.help_text_1 = Label(self.help_page_frame,
+                                 text="Once you finish all the questions, \nreturn to start by pushing the big green\n "
+                                      "“RETURN TO START” button.\n And feel free to play again or read up on your "
+                                      "statistics.",
+                                 font="Arial 11 italic", width=55, bg=background, height=4)
+        self.help_text_1.grid(row=3)
+
+        # Return to home frame
+        self.close_button_frame = Frame(self.help_page_frame, width=300, bg=background)
+        self.close_button_frame.grid(row=4)
+
+        # Close button (row 2)
+        self.close_button = Button(self.close_button_frame, text="Close", width=25,
+                                   bg="red", font="arial 10 bold", pady=10,
+                                   command=partial(self.close_help_page, partner))
+        self.close_button.grid(row=0, column=2)
+
+    def close_help_page(self, partner):
+        # Put start button back to normal...
+        partner.help_button.config(state=NORMAL)
+        self.help_page_box.destroy()
+
 
 class Stats:
     def __init__(self, partner):
         background = "orange"
 
-        # Disable Start Quiz button
-        # partner.answer_two_button.config(state=DISABLED)
+        partner.stats_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.stats_page_box = Toplevel()
 
         # If users press cross at top, closes question and 'releases' question button
-        self.stats_page_box.protocol('WM_DELETE_WINDOW', partial(self.close_question, partner))
+        self.stats_page_box.protocol('WM_DELETE_WINDOW', partial(self.close_stats_page, partner))
 
         # Set up GUI Frame
         self.stats_page_frame = Frame(self.stats_page_box, width=300, bg=background, pady=20, padx=10)
@@ -107,36 +187,161 @@ class Stats:
                                   bg=background)
         self.stats_text_3.grid(row=3)
 
+        global ratio
+
         # Stats text 4 (label, row 4)
         self.stats_text_4 = Label(self.stats_page_frame,
-                                  text="Average Correct Answers: {}".format(right_answers/games_played),
+                                  text="Average Correct Answers: {}".format(right_answers / games_played),
                                   font="Arial 10 italic", width=40,
                                   bg=background)
         self.stats_text_4.grid(row=4)
 
+        # Stats text 5 (label, row 5)
+        self.stats_text_5 = Label(self.stats_page_frame,
+                                  text="Ratio of Correct to Incorrect Answers: {}".format(ratio),
+                                  font="Arial 10 italic", width=50,
+                                  bg=background)
+        self.stats_text_5.grid(row=5)
+
         # Return to home frame
         self.export_frame = Frame(self.stats_page_frame, width=300, bg=background)
-        self.export_frame.grid(row=5)
+        self.export_frame.grid(row=7)
 
-        # Export Button
-        self.export_button = Button(self.export_frame, text="Export",
-                                    font="Arial 10 bold", bg="green", pady=10,
-                                    padx=10, width=25, command=self.export)
-        self.export_button.grid(row=0, column=0)
+        self.export_button = Button(self.export_frame, text="Export", width=25,
+                                    bg="red", font="arial 10 bold", pady=10,
+                                    command="")
+        self.export_button.grid(row=0, column=1)
 
         # Close button (row 2)
         self.close_button = Button(self.export_frame, text="Close", width=25,
                                    bg="red", font="arial 10 bold", pady=10,
-                                   command=partial(self.close_question, partner))
+                                   command=partial(self.close_stats_page, partner))
         self.close_button.grid(row=0, column=2)
 
-    def close_question(self, partner):
+    def export(self):
+        get_export = Export(self)
+
+    def close_stats_page(self, partner):
         # Put start button back to normal...
         partner.stats_button.config(state=NORMAL)
         self.stats_page_box.destroy()
 
-    def export(self):
-        placeholder = ""
+
+class Export:
+    def __init__(self, partner, calc_history):
+        background = "#a9ef99"   # Pale Green
+
+        # Disable Export button
+        partner.export_button.config(state=DISABLED)
+
+        # Sets up child window (ie: export box)
+        self.export_box = Toplevel()
+
+        # If users press cross at top, closes export and 'releases' export button
+        self.export_box.protocol('WM_DELETE_WINDOW', partial(self.close_export, partner))
+
+        # Set up GUI Frame
+        self.export_frame = Frame(self.export_box, width=300, bg=background)
+        self.export_frame.grid()
+
+        # Set up Export heading (row 0)
+        self.how_heading = Label(self.export_frame, text="Export Instructions",
+                                 font=("Arial", "10", "bold"), bg=background)
+        self.how_heading.grid(row=0)
+
+        # Export text (label, row 1)
+        self.export_text = Label(self.export_frame,
+                                 text="Enter a filename in the box below "
+                                      "and press the Save button to save "
+                                      "your calculation history to a text "
+                                      "file.", justify=LEFT,
+                                 width=40, bg=background, wrap=250)
+        self.export_text.grid(row=1)
+
+        # Warning text (label, row 2)
+        self.export_text = Label(self.export_frame,
+                                 text="If the filename you enter below "
+                                      "already exists, it's contents will "
+                                      "be replaced with your calculation "
+                                      "history", justify=LEFT,
+                                 bg="#ffafaf",  # Pink
+                                 fg="maroon", font="Arial 10 italic",
+                                 wrap=225, padx=10, pady=10)
+        self.export_text.grid(row=2, pady=10)
+
+        # Filename Entry Box (row 3)
+        self.filename_entry = Entry(self.export_frame, width=20,
+                                    font="Arial 14 bold", justify=CENTER)
+        self.filename_entry.grid(row=3, pady=10)
+
+        # Error Message labels (row 4)
+        self.save_error_label = Label(self.export_frame, text="",
+                                      fg="maroon", bg=background)
+        self.save_error_label.grid(row=4)
+
+        # Save / Cancel Frame (row 5)
+        self.save_cancel_frame = Frame(self.export_frame)
+        self.save_cancel_frame.grid(row=5, pady=10)
+
+        # Save and Cancel Buttons (row 0 of save_cancel_frame)
+        self.save_button = Button(self.save_cancel_frame, text="Save",
+                                  command=partial(lambda: self.save_history(
+                                      partner, calc_history)))
+        self.save_button.grid(row=0, column=0)
+
+        self.cancel_button = Button(self.save_cancel_frame, text="Cancel",
+                                    command=partial(self.close_export,
+                                                    partner))
+        self.cancel_button.grid(row=0, column=1)
+
+    def save_history(self, partner, calc_history):
+        # Regular expression to check file name. Can be Upper or lower case letters
+        valid_char = "[A-Za-z0-9_]"
+        has_error = "no"
+
+        filename = self.filename_entry.get()
+        for letter in filename:
+            if re.match(valid_char, letter):
+                continue
+
+            elif letter == " ":
+                problem = "(spaces not allowed)"
+
+            else:
+                problem = f"({letter}s not allowed)"
+            has_error = "yes"
+            break
+
+        if filename == "":
+           problem = "can't be blank"
+           has_error = "yes"
+
+        if has_error == "yes":
+           self.save_error_label.config(text="Invalid filename - {}"
+                                        .format(problem))
+           self.filename_entry.config(bg="#ffafaf")
+           print()
+        else:
+            # If there are no errors, generate text file and then close
+            # dialogue box, add .txt suffix
+
+            filename = filename + ".txt"
+
+            f = open(filename, "w+")
+
+            for item in calc_history:
+                f.write(item + "\n")
+
+            # close file
+            f.close()
+
+            # Close dialogue
+            self.close_export(partner)
+
+    def close_export(self, partner):
+        # Put export button back to normal...
+        partner.export_button.config(state=NORMAL)
+        self.export_box.destroy()
 
 
 class Question_1:
@@ -213,13 +418,12 @@ class Question_1:
 
     def close_question(self, partner):
         # Put start button back to normal...
-        partner.start_quiz_button.config(state=NORMAL)
         self.question_one_box.destroy()
 
     def question_2_correct(self):
         get_correct = Question_2(self)
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         self.question_one_box.destroy()
 
     def question_2_incorrect(self):
@@ -232,9 +436,6 @@ class Question_1:
 class Question_2:
     def __init__(self, partner):
         background = "orange"
-
-        # Disable Start Quiz button
-        partner.answer_three_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.question_two_box = Toplevel()
@@ -275,7 +476,7 @@ class Question_2:
         self.answer_one_button.grid(row=0, column=0)
 
         # Answer 2 Button
-        self.answer_two_button = Button(self.answer_frame, text="Ripanga",
+        self.answer_two_button = Button(self.answer_frame, text="Tepu",
                                         font="Arial 12", bg="purple", pady=10,
                                         padx=10, width=answer_button_width,
                                         command=self.question_3_correct)
@@ -302,14 +503,13 @@ class Question_2:
         self.close_button.grid(row=2, column=1, pady=10)
 
     def close_question(self, partner):
-        # Put start button back to normal...
-        partner.answer_three_button.config(state=NORMAL)
+        # Put start button back to normal
         self.question_two_box.destroy()
 
     def question_3_correct(self):
         get_correct = Question_3(self)
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         self.question_two_box.destroy()
 
     def question_3_incorrect(self):
@@ -322,9 +522,6 @@ class Question_2:
 class Question_3:
     def __init__(self, partner):
         background = "orange"
-
-        # Disable Start Quiz button
-        partner.answer_two_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.question_three_box = Toplevel()
@@ -392,14 +589,12 @@ class Question_3:
         self.close_button.grid(row=2, column=1, pady=10)
 
     def close_question(self, partner):
-        # Put start button back to normal...
-        partner.answer_three_button.config(state=NORMAL)
         self.question_three_box.destroy()
 
     def question_4_correct(self):
         get_correct = Question_4(self)
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         self.question_three_box.destroy()
 
     def question_4_incorrect(self):
@@ -412,9 +607,6 @@ class Question_3:
 class Question_4:
     def __init__(self, partner):
         background = "orange"
-
-        # Disable Start Quiz button
-        partner.answer_one_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.question_four_box = Toplevel()
@@ -483,13 +675,12 @@ class Question_4:
 
     def close_question(self, partner):
         # Put start button back to normal...
-        partner.answer_three_button.config(state=NORMAL)
         self.question_four_box.destroy()
 
     def question_5_correct(self):
         get_correct = Question_5(self)
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         self.question_four_box.destroy()
 
     def question_5_incorrect(self):
@@ -502,9 +693,6 @@ class Question_4:
 class Question_5:
     def __init__(self, partner):
         background = "orange"
-
-        # Disable Start Quiz button
-        partner.answer_four_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.question_five_box = Toplevel()
@@ -573,13 +761,12 @@ class Question_5:
 
     def close_question(self, partner):
         # Put start button back to normal...
-        partner.answer_three_button.config(state=NORMAL)
         self.question_five_box.destroy()
 
     def question_6_correct(self):
         get_correct = Question_6(self)
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         self.question_five_box.destroy()
 
     def question_6_incorrect(self):
@@ -592,9 +779,6 @@ class Question_5:
 class Question_6:
     def __init__(self, partner):
         background = "orange"
-
-        # Disable Start Quiz button
-        partner.answer_three_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.question_six_box = Toplevel()
@@ -663,13 +847,12 @@ class Question_6:
 
     def close_question(self, partner):
         # Put start button back to normal...
-        partner.answer_three_button.config(state=NORMAL)
         self.question_six_box.destroy()
 
     def question_7_correct(self):
         get_correct = Question_7(self)
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         self.question_six_box.destroy()
 
     def question_7_incorrect(self):
@@ -682,9 +865,6 @@ class Question_6:
 class Question_7:
     def __init__(self, partner):
         background = "orange"
-
-        # Disable Start Quiz button
-        partner.answer_three_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.question_seven_box = Toplevel()
@@ -753,13 +933,12 @@ class Question_7:
 
     def close_question(self, partner):
         # Put start button back to normal...
-        partner.answer_three_button.config(state=NORMAL)
         self.question_seven_box.destroy()
 
     def question_8_correct(self):
         get_correct = Question_8(self)
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         self.question_seven_box.destroy()
 
     def question_8_incorrect(self):
@@ -772,9 +951,6 @@ class Question_7:
 class Question_8:
     def __init__(self, partner):
         background = "orange"
-
-        # Disable Start Quiz button
-        partner.answer_one_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.question_eight_box = Toplevel()
@@ -842,14 +1018,12 @@ class Question_8:
         self.close_button.grid(row=2, column=1, pady=10)
 
     def close_question(self, partner):
-        # Put start button back to normal...
-        partner.answer_three_button.config(state=NORMAL)
         self.question_eight_box.destroy()
 
     def question_9_correct(self):
         get_correct = Question_9(self)
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         self.question_eight_box.destroy()
 
     def question_9_incorrect(self):
@@ -862,9 +1036,6 @@ class Question_8:
 class Question_9:
     def __init__(self, partner):
         background = "orange"
-
-        # Disable Start Quiz button
-        partner.answer_four_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.question_nine_box = Toplevel()
@@ -932,14 +1103,12 @@ class Question_9:
         self.close_button.grid(row=2, column=1, pady=10)
 
     def close_question(self, partner):
-        # Put start button back to normal...
-        partner.answer_three_button.config(state=NORMAL)
         self.question_nine_box.destroy()
 
     def question_10_correct(self):
         get_correct = Question_10(self)
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         self.question_nine_box.destroy()
 
     def question_10_incorrect(self):
@@ -952,9 +1121,6 @@ class Question_9:
 class Question_10:
     def __init__(self, partner):
         background = "orange"
-
-        # Disable Start Quiz button
-        partner.answer_three_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
         self.question_ten_box = Toplevel()
@@ -1022,13 +1188,11 @@ class Question_10:
         self.close_button.grid(row=2, column=1, pady=10)
 
     def close_question(self, partner):
-        # Put start button back to normal...
-        partner.answer_three_button.config(state=NORMAL)
         self.question_ten_box.destroy()
 
     def end_screen_correct(self):
-        global right_answers
-        right_answers += 1
+        global temp_right_answers
+        temp_right_answers += 1
         get_correct = End_screen(self)
         self.question_ten_box.destroy()
 
@@ -1043,14 +1207,8 @@ class End_screen:
     def __init__(self, partner):
         background = "orange"
 
-        # Disable Start Quiz button
-        partner.answer_two_button.config(state=DISABLED)
-
         # Sets up child window (ie: question box)
         self.end_screen_box = Toplevel()
-
-        # If users press cross at top, closes question and 'releases' question button
-        self.end_screen_box.protocol('WM_DELETE_WINDOW', partial(self.close_question, partner))
 
         # Set up GUI Frame
         self.end_screen_frame = Frame(self.end_screen_box, width=300, height=300, bg=background)
@@ -1064,11 +1222,9 @@ class End_screen:
                                              padx=20, width=17)
         self.question_number_heading.grid(row=0)
 
-        global right_answers
-
         # Question text (label, row 1)
         self.question_text = Label(self.end_screen_frame,
-                                   text="You got {} answers right!".format(right_answers),
+                                   text="You got {} answers right!".format(temp_right_answers),
                                    font="Arial 12 italic", width=40,
                                    bg=background)
         self.question_text.grid(row=1)
@@ -1084,21 +1240,18 @@ class End_screen:
                                             command=self.home_screen)
         self.return_to_home_button.grid(row=0, column=1)
 
-        # Close button (row 2)
-        self.close_button = Button(self.return_to_start_frame, text="Close", width=10,
-                                   bg="red", font="arial 10 bold",
-                                   command=partial(self.close_question, partner))
-        self.close_button.grid(row=2, column=1, pady=10)
-
-    def close_question(self, partner):
-        # Put start button back to normal...
-        self.end_screen_box.destroy()
-
     def home_screen(self):
+        global stats
+        stats = True
         get_home_screen = Home()
         global games_played
         games_played += 1
+        global temp_right_answers
+        global right_answers
+        right_answers += temp_right_answers
+        temp_right_answers = 0
         self.end_screen_box.destroy()
+
 
 # Main Routine
 if __name__ == "__main__":

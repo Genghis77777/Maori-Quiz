@@ -1,4 +1,5 @@
 # Introduces functionality to the help button on the home screen.
+# Fixes the perfect score bug (details found in powerpoint evidence)
 
 from tkinter import *
 from functools import partial  # To prevent unwanted windows
@@ -159,6 +160,10 @@ class Stats:
                                    padx=20, width=17)
         self.stats_heading.grid(row=0)
 
+        global right_answers
+        global wrong_answers
+        global games_played
+
         # Stats text 1 (label, row 1)
         self.stats_text_1 = Label(self.stats_page_frame,
                                   text="Total Games Played: {}".format(games_played),
@@ -187,9 +192,14 @@ class Stats:
                                   bg=background)
         self.stats_text_4.grid(row=4)
 
+        if wrong_answers == 0:
+            ratio = right_answers
+        else:
+            ratio = right_answers/wrong_answers
+
         # Stats text 5 (label, row 5)
         self.stats_text_5 = Label(self.stats_page_frame,
-                                  text="Ratio of Correct to Incorrect Answers: {}".format(right_answers/wrong_answers),
+                                  text="Ratio of Correct to Incorrect Answers: {}".format(ratio),
                                   font="Arial 10 italic", width=50,
                                   bg=background)
         self.stats_text_5.grid(row=5)

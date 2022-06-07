@@ -1,9 +1,15 @@
-# Introduces functionality to the help button on the home screen.
-# Fixes the perfect score bug (details found in powerpoint evidence)
+""" 07_Assembled_Outcome_v1
+- Introduces functionality to the help button on the home screen.
+- Fixes the perfect score bug (details found in powerpoint evidence)
+06/07/2022
+Created by Joshua Kan
+"""
+
 
 from tkinter import *
 from functools import partial  # To prevent unwanted windows
 
+# Variables hold stats for stats page
 right_answers = 0
 temp_right_answers = 0
 wrong_answers = 0
@@ -51,6 +57,7 @@ class Home:
                                    pady=10, padx=13, command=self.stats)
         self.stats_button.grid(row=0, column=0)
 
+        # Prevents user from opening stats page before playing at least one game
         if stats == True:
             self.stats_button.config(state=NORMAL)
         else:
@@ -63,12 +70,15 @@ class Home:
         self.help_button.grid(row=0, column=1)
 
     def question_1(self):
+        # Opens the Question 1 window
         get_question = Question_1(self)
 
     def stats(self):
+        # Opens the Stats window
         get_stats = Stats(self)
 
     def help(self):
+        # Opens the Help window
         get_help = Help(self)
 
 
@@ -140,6 +150,7 @@ class Stats:
     def __init__(self, partner):
         background = "orange"
 
+        # Disables stats button
         partner.stats_button.config(state=DISABLED)
 
         # Sets up child window (ie: question box)
@@ -160,6 +171,7 @@ class Stats:
                                    padx=20, width=17)
         self.stats_heading.grid(row=0)
 
+        # References variables at the top of code
         global right_answers
         global wrong_answers
         global games_played
@@ -192,6 +204,7 @@ class Stats:
                                   bg=background)
         self.stats_text_4.grid(row=4)
 
+        # Provides correct ratio when the user gets a perfect score
         if wrong_answers == 0:
             ratio = right_answers
         else:
@@ -297,12 +310,14 @@ class Question_1:
         self.question_one_box.destroy()
 
     def question_2_correct(self):
+        # Opens next question and closes the current one
         get_correct = Question_2(self)
         global temp_right_answers
         temp_right_answers += 1
         self.question_one_box.destroy()
 
     def question_2_incorrect(self):
+        # Opens next question and closes the current one
         get_correct = Question_2(self)
         global wrong_answers
         wrong_answers += 1
@@ -383,12 +398,14 @@ class Question_2:
         self.question_two_box.destroy()
 
     def question_3_correct(self):
+        # Opens next question and closes the current one.
         get_correct = Question_3(self)
         global temp_right_answers
         temp_right_answers += 1
         self.question_two_box.destroy()
 
     def question_3_incorrect(self):
+        # Opens next question and closes the current one.
         get_correct = Question_3(self)
         global wrong_answers
         wrong_answers += 1
@@ -468,12 +485,14 @@ class Question_3:
         self.question_three_box.destroy()
 
     def question_4_correct(self):
+        # Opens next question and closes the current one.
         get_correct = Question_4(self)
         global temp_right_answers
         temp_right_answers += 1
         self.question_three_box.destroy()
 
     def question_4_incorrect(self):
+        # Opens next question and closes the current one.
         get_correct = Question_4(self)
         global wrong_answers
         wrong_answers += 1
@@ -554,12 +573,14 @@ class Question_4:
         self.question_four_box.destroy()
 
     def question_5_correct(self):
+        # Opens next question and closes the current one.
         get_correct = Question_5(self)
         global temp_right_answers
         temp_right_answers += 1
         self.question_four_box.destroy()
 
     def question_5_incorrect(self):
+        # Opens next question and closes the current one.
         get_correct = Question_5(self)
         global wrong_answers
         wrong_answers += 1
@@ -640,12 +661,14 @@ class Question_5:
         self.question_five_box.destroy()
 
     def question_6_correct(self):
+        # Opens next question and closes the current one.
         get_correct = Question_6(self)
         global temp_right_answers
         temp_right_answers += 1
         self.question_five_box.destroy()
 
     def question_6_incorrect(self):
+        # Opens next question and closes the current one.
         get_correct = Question_6(self)
         global wrong_answers
         wrong_answers += 1
@@ -726,12 +749,14 @@ class Question_6:
         self.question_six_box.destroy()
 
     def question_7_correct(self):
+        # Opens next question and closes the current one.
         get_correct = Question_7(self)
         global temp_right_answers
         temp_right_answers += 1
         self.question_six_box.destroy()
 
     def question_7_incorrect(self):
+        # Opens next question and closes the current one.
         get_correct = Question_7(self)
         global wrong_answers
         wrong_answers += 1
@@ -812,12 +837,14 @@ class Question_7:
         self.question_seven_box.destroy()
 
     def question_8_correct(self):
+        # Opens next question and closes the current one.
         get_correct = Question_8(self)
         global temp_right_answers
         temp_right_answers += 1
         self.question_seven_box.destroy()
 
     def question_8_incorrect(self):
+        # Opens next question and closes the current one.
         get_correct = Question_8(self)
         global wrong_answers
         wrong_answers += 1
@@ -897,12 +924,14 @@ class Question_8:
         self.question_eight_box.destroy()
 
     def question_9_correct(self):
+        # Opens next question and closes the current one.
         get_correct = Question_9(self)
         global temp_right_answers
         temp_right_answers += 1
         self.question_eight_box.destroy()
 
     def question_9_incorrect(self):
+        # Opens next question and closes the current one.
         get_correct = Question_9(self)
         global wrong_answers
         wrong_answers += 1
@@ -979,15 +1008,18 @@ class Question_9:
         self.close_button.grid(row=2, column=1, pady=10)
 
     def close_question(self, partner):
+        # Closes current window
         self.question_nine_box.destroy()
 
     def question_10_correct(self):
+        # Opens next question and closes the current one.
         get_correct = Question_10(self)
         global temp_right_answers
         temp_right_answers += 1
         self.question_nine_box.destroy()
 
     def question_10_incorrect(self):
+        # Opens next question and closes the current one.
         get_correct = Question_10(self)
         global wrong_answers
         wrong_answers += 1
@@ -1064,15 +1096,18 @@ class Question_10:
         self.close_button.grid(row=2, column=1, pady=10)
 
     def close_question(self, partner):
+        # Closes current window
         self.question_ten_box.destroy()
 
     def end_screen_correct(self):
+        # Opens next question and closes the current one.
         global temp_right_answers
         temp_right_answers += 1
         get_correct = End_screen(self)
         self.question_ten_box.destroy()
 
     def end_screen_incorrect(self):
+        # Opens next question and closes the current one.
         get_correct = End_screen(self)
         global wrong_answers
         wrong_answers += 1
@@ -1117,6 +1152,7 @@ class End_screen:
         self.return_to_home_button.grid(row=0, column=1)
 
     def home_screen(self):
+        # Opens home screen, closes end screen, collects stats
         global stats
         stats = True
         get_home_screen = Home()
